@@ -12,9 +12,9 @@ COPY    index.html /var/www/html/index.html
 
 RUN     mkdir -p /run/nginx
 
-RUN     openssl req -x509 -out /etc/ssl/certs/wpadda.crt -keyout /etc/ssl/private/wpadda.key \
+RUN     openssl req -x509 -out /etc/ssl/certs/nginx_inception.crt -keyout /etc/ssl/certs/nginx_inception.key \
   -newkey rsa:2048 -nodes -sha256 \
-  -subj '/CN=wpadda'
+  -subj '/CN=adda-sil'
 
 RUN     adduser -D "adda-sil" && echo "adda-sil:admin" | chpasswd
 RUN     ssh-keygen -A

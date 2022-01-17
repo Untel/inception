@@ -1,5 +1,5 @@
 services:
   nginx:
-    build: nginx/
+    build: requirements/nginx/
     ports:
-      - "5000:5000"
+      - "443:443"
