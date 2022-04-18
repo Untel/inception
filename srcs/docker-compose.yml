@@ -1,5 +1,35 @@
+volumes:
+  data: {}
 services:
+  mariadb:
+    image: debian:buster
+    restart: always
+    expose:
+      - "3306"
+    networks:
+      - inception
+    tty: true
   nginx:
-    build: requirements/nginx/
+    build: ./requirements/nginx
+    restart: always
     ports:
+      - "8080:80"
       - "443:443"
+    volumes:
+      - data:/var/www/html
+    networks:
+      - inception
+    tty: true
+  wordpress:
+    image: debian:buster
+    restart: always
+    volumes:
+      - data:/var/www/html
+    expose:
+      - "9000"
+    networks:
+      - inception
+    tty: true
+networks:
+  inception:
+    external: true

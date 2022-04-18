@@ -1,6 +1,6 @@
-FROM alpine
-RUN apk update &&\
-    apk add nginx openssl openssh
+FROM    alpine
+RUN     apk update
+RUN     apk add nginx openssl
 
 RUN     adduser -D -g 'www' www
 RUN     chown -R www:www /var/lib/nginx
@@ -17,7 +17,6 @@ RUN     openssl req -x509 -out /etc/ssl/certs/nginx_inception.crt -keyout /etc/s
   -subj '/CN=adda-sil'
 
 RUN     adduser -D "adda-sil" && echo "adda-sil:admin" | chpasswd
-RUN     ssh-keygen -A
 
-EXPOSE 22 80 443
+EXPOSE 80 443
 ENTRYPOINT nginx -g 'daemon off;'
