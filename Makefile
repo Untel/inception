@@ -6,38 +6,45 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/16 19:13:19 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/18 16:09:31 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME				= inception
 SRCS_DIR			= srcs
 ENTRY				= docker-compose.yml
-compose				= ${SRCS_DIR}/${ENTRY}
+COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
+A					=
 
 all:
 					@$(MAKE) $(NAME)
 
 $(NAME):
-					docker-compose -f ${compose} up
+					${COMPOSE} up
 
-stop_all:
-					docker stop $(docker ps -a -q)
+cmp:
+					$(COMPOSE) ${A}
 
 stop:
-					docker-compose -f ${compose} down
+					${COMPOSE} stop
+
+down:
+					${COMPOSE} down
 
 clear:
-					docker rm $(shell docker ps -a -q)
+					${COMPOSE} down -v
 
 nginx:
-					docker exec -it $(shell docker ps -a -q --filter name=srcs_nginx) /bin/sh
+					${COMPOSE} exec nginx /bin/sh
 
 mariadb:
-					docker exec -it $(shell docker ps -a -q --filter name=srcs_mariadb) /bin/sh
+					${COMPOSE} exec mariadb /bin/sh
 
 wordpress:
-					docker exec -it $(shell docker ps -a -q --filter name=srcs_wordpress) /bin/sh
+					${COMPOSE} exec wordpress /bin/sh
 
 re:
-					docker-compose -f ${compose} up --build
+					${COMPOSE} up --build
+
+fre:				clear
+					${COMPOSE} up --build
