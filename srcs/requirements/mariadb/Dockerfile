@@ -6,7 +6,6 @@ RUN     apk add --no-cache mariadb
 RUN     apk add --no-cache mariadb-client
 
 
-# RUN     mkdir -p /run/mysqld
 
 USER        root
 COPY        /conf/my.cnf /etc/mysql/my.cnf
@@ -17,6 +16,7 @@ ARG         MYSQL_USER
 ARG         MYSQL_PASSWORD
 ARG         MYSQL_ROOT_PASSWORD
 
+# Anonymous users @see https://stackoverflow.com/questions/10299148/mysql-error-1045-28000-access-denied-for-user-billlocalhost-using-passw
 RUN         echo -e "\
     USE mysql;\n\
     FLUSH PRIVILEGES;\n\
@@ -28,9 +28,10 @@ RUN         echo -e "\
     GRANT ALL PRIVILEGES ON $WP_DB_NAME.* TO '$MYSQL_USER'@'%';\n\
     FLUSH PRIVILEGES;\n\
 " > /bootstrap.sql
+RUN         mkdir -p /run/mysqld
+RUN         chown -R mysql:mysql /run/mysqld
 RUN         mariadb-install-db
-RUN         chown -R mysql:mysql /var/lib/mysql
 
 EXPOSE      3306
-ENTRYPOINT  su -c "mysqld_safe"
+ENTRYPOINT  su -c "mysqld"
 

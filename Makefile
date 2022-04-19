@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/19 02:16:02 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/19 03:39:29 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,8 @@ ENTRY				= docker-compose.yml
 COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
 A					=
 
-include ${SRCS_DIR}/.env
-export
+# include ${SRCS_DIR}/.env
+# export
 
 all:
 					@$(MAKE) $(NAME)
@@ -63,3 +63,5 @@ re:
 
 fre:				clear
 					${COMPOSE} up --build
+
+.PHONY:				srcs

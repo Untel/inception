@@ -1,5 +1,4 @@
-volumes:
-  database: {}
+version: '3'
 services:
   mariadb:
     container_name: mariadb
@@ -15,7 +14,7 @@ services:
     expose:
       - "3306"
     networks:
-      - inception
+      - database
     env_file:
       - .env
     environment:
@@ -23,6 +22,8 @@ services:
       MYSQL_USER:             ${MYSQL_USER}
       MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql/
     tty: true
   nginx:
     container_name: nginx
@@ -32,33 +33,48 @@ services:
       - "8080:80"
       # - "443:443"
     networks:
-      - inception
+      - database
     tty: true
-  # wordpress:
-  #   container_name: wordpress
-  #   build: ./requirements/wordpress
-  #   restart: always
-  #   volumes:
-  #     - wordpress:/var/www/html
-  #   ports:
-  #     - 9000:9000
-  #   networks:
-  #     - inception
-  #   depends_on:
-  #     - mariadb
-  #   env_file:
-  #     - .env
-  #   tty: true
+  wordpress:
+    container_name: wordpress
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile
+      args:
+        WP_DB_NAME:             ${WP_DB_NAME}
+        MYSQL_USER:             ${MYSQL_USER}
+        MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
+        MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    restart: always
+    # volumes:
+    #   - wordpress_files:/var/www/html
+    environment:
+      WP_DB_NAME:             ${WP_DB_NAME}
+      MYSQL_USER:             ${MYSQL_USER}
+      MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 9000:9000
+    networks:
+      - database
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+    tty: true
   # adminer:
     # build: ./requirements/adminer
     # restart: always
     # ports:
     #   - 1664:80
-  test:
-    image: alpine
-    restart: always
-    tty: true
+  # test:
+  #   image: alpine
+  #   restart: always
+  #   tty: true
 
 networks:
-  inception:
-    driver: bridge
+  database:
+
+volumes:
+  mariadb_data:
+  wordpress_files:

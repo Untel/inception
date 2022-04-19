@@ -17,11 +17,15 @@
 
 # fi
 
-if ! $(su -c 'wp core is-installed --path="/var/www"' - www); then
-    su -c 'wp core install --path="/var/www" --url="172.17.0.2:5050" --title="WP Adda-sil" --admin_user="wpadda" --admin_password="wpadda" --admin_email="adrien@fernandes.bzh"' - www
-    su -c 'wp user create --path="/var/www" "adda-sil" "adda-sil@student.42.fr" --user_pass="adda-sil" --role="editor"' - www
-    su -c 'wp user create --path="/var/www" "roalvare" "roalvare@student.42.fr" --user_pass="roalvare" --role="author"' - www
-    su -c 'wp user create --path="/var/www" "mchardin" "mchardin@student.42.fr" --user_pass="mchardin" --role="contributor"' - www
+echo 'Wordpress commander'
+env
+if ! $(wp core is-installed --path="/var/www"); then
+    echo 'Insalling WORDPRESSS'
+    # wp config create --skip-check --path="/var/www" --dbname=$WP_DB_NAME --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --dbcharset="utf8" --dbcollate="utf8_general_ci" --allow-root
+    echo 'Config built'
+    cat /var/www/wp-config.php
+    # wp core install --path="/var/www" --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL
+    # wp user create --path="/var/www" $WP_USER $WP_EMAIL --user_pass=$WP_PWD --role="editor"
 fi
 
 # wp redis enable --allow-root
