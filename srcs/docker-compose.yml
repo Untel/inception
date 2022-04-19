@@ -4,7 +4,6 @@ services:
     container_name: mariadb
     build:
       context: requirements/mariadb
-      dockerfile: Dockerfile
       args:
         WP_DB_NAME:           ${WP_DB_NAME}
         MYSQL_USER:           ${MYSQL_USER}
@@ -39,15 +38,14 @@ services:
     container_name: wordpress
     build:
       context: requirements/wordpress
-      dockerfile: Dockerfile
       args:
         WP_DB_NAME:             ${WP_DB_NAME}
         MYSQL_USER:             ${MYSQL_USER}
         MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
         MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
     restart: always
-    # volumes:
-    #   - wordpress_files:/var/www/html
+    volumes:
+      - wordpress_files:/var/www/html
     environment:
       WP_DB_NAME:             ${WP_DB_NAME}
       MYSQL_USER:             ${MYSQL_USER}
@@ -62,6 +60,22 @@ services:
     env_file:
       - .env
     tty: true
+  wpcli:
+    build:
+      context: requirements/wpcli
+    restart: 'no'
+    depends_on:
+      - wordpress
+    env_file:
+      - .env
+    environment:
+      WP_DB_NAME:             ${WP_DB_NAME}
+      MYSQL_USER:             ${MYSQL_USER}
+      MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    volumes_from:
+      - wordpress
+    command: install
   # adminer:
     # build: ./requirements/adminer
     # restart: always

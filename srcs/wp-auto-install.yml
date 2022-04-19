@@ -1,0 +1,12 @@
+version: '3'
+services:
+  wp-auto-config:
+    build:
+      context: requirements/wpcli
+    container_name: wp_autoconfig
+    entrypoint: sh /run/auto-install.sh
+    volumes:
+      - wordpress
+    # working_dir: /var/www/html
+    depends_on:
+      - wpcli

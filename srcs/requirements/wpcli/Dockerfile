@@ -1,4 +1,4 @@
-FROM      alpine
+FROM alpine
 
 RUN       apk update
 RUN       apk upgrade
@@ -13,14 +13,10 @@ RUN       chown -R www:www /var/log
 
 ADD       https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
 RUN       chmod +x /usr/local/bin/wp
-RUN       chown www:www /usr/local/bin/wp
-COPY      /tools/wordpress.sh /tmp/wordpress.sh
+# RUN       chown www:www /usr/local/bin/wp
+ADD       /tools/auto-install.sh /tools/entry-point.sh /scripts/
+RUN       chmod +x /scripts/*
 
-COPY      /conf/wp-config.php wp-config.php
-RUN       wp core download --path=/var/www --allow-root
-EXPOSE    9000
-
-WORKDIR   /var/www/wordpress
-
-ENTRYPOINT su -c "/usr/sbin/php-fpm7 -F -R" - root
-# ENTRYPOINT su -c "sh /tmp/wordpress.sh" - www
+USER      www
+ENTRYPOINT [ "/scripts/entry-point.sh" ]
+CMD ["wp", "--allow-root"]

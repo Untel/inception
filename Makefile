@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/19 03:39:29 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/19 07:38:55 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,12 @@ all:
 
 $(NAME):
 					${COMPOSE} up
+
+start:
+					docker-compose up -d --build
+
+configure:
+					$(COMPOSE) run --rm wpcli install
 
 cmp:
 					$(COMPOSE) ${A}
