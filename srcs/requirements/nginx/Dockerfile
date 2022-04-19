@@ -6,9 +6,9 @@ RUN     adduser -D -g 'www' www
 RUN     chown -R www:www /var/lib/nginx
 RUN     chown -R www:www /var/www
 
-COPY    nginx.conf /etc/nginx/nginx.conf
+COPY    /conf/nginx.conf /etc/nginx/nginx.conf
 RUN     mkdir -p /var/www/html
-COPY    index.html /var/www/html/index.html
+COPY    /tools/index.html /var/www/html/index.html
 
 RUN     mkdir -p /run/nginx
 
