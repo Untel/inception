@@ -41,7 +41,7 @@ services:
       target: InceptionWordpress
     restart: always
     volumes:
-      - wordpress_files:/var/www/html
+      - wordpress_files:/var/www
     expose:
       - 9000
     networks:
