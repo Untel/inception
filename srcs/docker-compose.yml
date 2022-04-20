@@ -32,27 +32,31 @@ services:
       - "8080:80"
       # - "443:443"
     networks:
-      - database
+      - nginx_bridge
     tty: true
   wordpress:
     container_name: wordpress
     build:
       context: requirements/wordpress
+      target: InceptionWordpress
     restart: always
     volumes:
       - wordpress_files:/var/www/html
-    ports:
-      - 9000:9000
+    expose:
+      - 9000
     networks:
       - database
+      - nginx_bridge
     depends_on:
       - mariadb
     env_file:
       - .env
     tty: true
   wpcli:
+    container_name: wpcli
     build:
-      context: requirements/wpcli
+      context: requirements/wordpress
+      target: InceptionWPCli
     restart: 'no'
     depends_on:
       - wordpress
@@ -65,10 +69,10 @@ services:
       - database
     entrypoint: sh /scripts/entry-point.sh
   # adminer:
-    # build: ./requirements/adminer
-    # restart: always
-    # ports:
-    #   - 1664:80
+  #   build: ./requirements/adminer
+  #   restart: always
+  #   ports:
+  #     - 1664:80
   # test:
   #   image: alpine
   #   restart: always
@@ -76,6 +80,7 @@ services:
 
 networks:
   database:
+  nginx_bridge:
 
 volumes:
   mariadb_data:

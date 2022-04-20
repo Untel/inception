@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/19 07:38:55 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/20 16:29:52 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,6 @@ SRCS_DIR			= srcs
 ENTRY				= docker-compose.yml
 COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
 A					=
-
-# include ${SRCS_DIR}/.env
-# export
 
 all:
 					@$(MAKE) $(NAME)
@@ -28,6 +25,8 @@ $(NAME):
 start:
 					docker-compose up -d --build
 
+cli:
+					$(COMPOSE) run --rm wpcli $(A)
 configure:
 					$(COMPOSE) run --rm wpcli install
 
