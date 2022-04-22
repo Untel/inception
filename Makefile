@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/20 16:29:52 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/22 10:00:29 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,8 @@ start:
 cli:
 					$(COMPOSE) run --rm wpcli $(A)
 configure:
+					echo "127.0.0.1 addasil.42.fr" >> /etc/host
+					export HOSTALIASES=~/.hosts
 					$(COMPOSE) run --rm wpcli install
 
 cmp:
