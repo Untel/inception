@@ -14,4 +14,7 @@ RUN         openssl req -x509 -out /etc/ssl/certs/nginx_inception.crt -keyout /e
 RUN         adduser -D "adda-sil" && echo "adda-sil:admin" | chpasswd
 
 EXPOSE      80 443
+
+WORKDIR /var/log/nginx
+
 ENTRYPOINT  nginx -g 'daemon off;'

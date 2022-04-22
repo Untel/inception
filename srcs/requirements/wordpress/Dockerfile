@@ -1,5 +1,5 @@
 ###             BaseImage
-FROM            alpine as InceptionAlpinePhp
+FROM            alpine as inception_alpine_php
 RUN             apk update
 RUN             apk upgrade
 RUN             apk add --no-cache &&\
@@ -9,15 +9,21 @@ RUN             mkdir -p /var/www
 RUN             mkdir -p /var/log
 RUN             chown -R www:www /var/www
 RUN             chown -R www:www /var/log
+
+
 WORKDIR         /var/www
 
 ###             Wordpress image
-FROM            InceptionAlpinePhp as InceptionWordpress
+FROM            inception_alpine_php as inception_wordpress
+
+RUN             touch /var/log/php7/incepool.access.log
+COPY            conf/php-fpm.conf /etc/php7/php-fpm.conf
+COPY            conf/incepool.conf /etc/php7/php-fpm.d/incepool.conf
 EXPOSE          9000
 ENTRYPOINT      su -c "/usr/sbin/php-fpm7 -F -R" - root
 
 ###             WPCli image
-FROM            InceptionAlpinePhp as InceptionWPCli
+FROM            inception_alpine_php as inception_wpcli
 RUN             apk add mariadb-client
 ADD             https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
 RUN             chmod +x /usr/local/bin/wp

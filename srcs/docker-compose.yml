@@ -33,17 +33,22 @@ services:
       # - "443:443"
     networks:
       - nginx_bridge
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_files:/var/www
     tty: true
   wordpress:
     container_name: wordpress
     build:
       context: requirements/wordpress
-      target: InceptionWordpress
+      target: inception_wordpress
     restart: always
     volumes:
       - wordpress_files:/var/www
     expose:
       - 9000
+      - 9001
     networks:
       - database
       - nginx_bridge
@@ -56,7 +61,7 @@ services:
     container_name: wpcli
     build:
       context: requirements/wordpress
-      target: InceptionWPCli
+      target: inception_wpcli
     restart: 'no'
     depends_on:
       - wordpress
@@ -85,3 +90,4 @@ networks:
 volumes:
   mariadb_data:
   wordpress_files:
+  php_socket:
