@@ -11,7 +11,7 @@ services:
         MYSQL_ROOT_PASSWORD:  ${MYSQL_ROOT_PASSWORD}
     restart: always
     expose:
-      - "3306"
+      - 3306
     networks:
       - database
     env_file:
@@ -89,5 +89,15 @@ networks:
 
 volumes:
   mariadb_data:
+    driver_opts:
+      type: none
+      o: bind
+      device: "$HOME/adda-sil/data/mariadb"
+    # driver: local-persist
+    # driver_opts:
+    #   mountpoint: '~/adda-sil/data/mariadb'
   wordpress_files:
-  php_socket:
+    driver_opts:
+      type: none
+      o: bind
+      device: "$HOME/adda-sil/data/wordpress"

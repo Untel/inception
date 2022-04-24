@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/22 10:00:29 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/24 14:04:33 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,20 +16,31 @@ ENTRY				= docker-compose.yml
 COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
 A					=
 
+VOLUMES_DIR			= ~/adda-sil/data
+
 all:
 					@$(MAKE) $(NAME)
 
 $(NAME):
 					${COMPOSE} up
 
-start:
-					docker-compose up -d --build
+create_volumes_dir:
+					mkdir -p ${VOLUMES_DIR}/mariadb
+					mkdir -p ${VOLUMES_DIR}/wordpress
+
+local_persist_plugin:
+					curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
+
+start:				create_volumes_dir
+					$(COMPOSE) build
+					$(COMPOSE) up -d
+					@$(MAKE) configure
+					@$(MAKE) stop
+					@$(MAKE) all
 
 cli:
 					$(COMPOSE) run --rm wpcli $(A)
 configure:
-					echo "127.0.0.1 addasil.42.fr" >> /etc/host
-					export HOSTALIASES=~/.hosts
 					$(COMPOSE) run --rm wpcli install
 
 cmp:
@@ -50,6 +61,9 @@ nginx:
 mariadb:
 					${COMPOSE} exec mariadb /bin/sh
 
+wpcli:
+					${COMPOSE} exec wpcli /bin/sh
+
 mysql_root:
 					${COMPOSE} exec -u root mariadb mariadb -h localhost -u root
 
@@ -65,7 +79,7 @@ wordpress:
 test:
 					${COMPOSE} exec test /bin/sh
 
-re:
+re:					create_volumes_dir
 					${COMPOSE} up --build
 
 fre:				clear
