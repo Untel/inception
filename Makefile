@@ -6,7 +6,7 @@
 #    By: adda-sil <adda-sil@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/16 10:17:34 by adda-sil          #+#    #+#              #
-#    Updated: 2022/04/24 14:04:33 by adda-sil         ###   ########.fr        #
+#    Updated: 2022/04/24 15:02:23 by adda-sil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,12 @@ all:
 
 $(NAME):
 					${COMPOSE} up
+
+logger:
+					$(COMPOSE) logs --tail="all" -t -f
+
+log:
+					$(COMPOSE) logs --tail="all" -t -f $(A)
 
 create_volumes_dir:
 					mkdir -p ${VOLUMES_DIR}/mariadb
@@ -43,6 +49,7 @@ cli:
 configure:
 					$(COMPOSE) run --rm wpcli install
 
+
 cmp:
 					$(COMPOSE) ${A}
 
@@ -54,6 +61,7 @@ down:
 
 clear:
 					${COMPOSE} down -v
+
 
 nginx:
 					${COMPOSE} exec nginx /bin/sh
@@ -85,4 +93,4 @@ re:					create_volumes_dir
 fre:				clear
 					${COMPOSE} up --build
 
-.PHONY:				srcs
+.PHONY:				srcs logger
