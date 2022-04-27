@@ -25,10 +25,10 @@ if [ "$1" == "install" ]; then
       wp $wp_opts user create --path=$install_dir $WP_USER $WP_EMAIL --user_pass=$WP_PWD --role="editor"
       wp $wp_opts plugin install redis-cache --activate
       wp $wp_opts plugin update --all
-      wp $wp_opts redis enable
     else
       echo 'WORDPRESS IS STILL CONFIGURED'
     fi
+    wp $wp_opts redis enable
 else
   exec "$@"
 fi

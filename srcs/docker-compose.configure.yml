@@ -9,12 +9,14 @@ services:
     restart: 'no'
     depends_on:
       - mariadb
+      - redis
     env_file:
       - .env
     volumes_from:
       - wordpress
     networks:
       - database
+      - inner
     environment:
       WP_CONFIG_EXTRA: |+
         define('WP_REDIS_HOST', '${WP_REDIS_HOST}');
