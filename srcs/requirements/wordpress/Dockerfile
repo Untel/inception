@@ -28,6 +28,7 @@ RUN             apk add mariadb-client
 ADD             https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
 RUN             chmod +x /usr/local/bin/wp
 RUN             chown -R www:www /usr/local/bin/wp
+# ADD            /tools/adminer.php /tmp/adminer.php
 
 ADD             /tools/entry-point.sh /scripts/
 RUN             chmod +x /scripts/entry-point.sh

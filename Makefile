@@ -13,7 +13,9 @@
 NAME				= inception
 SRCS_DIR			= srcs
 ENTRY				= docker-compose.yml
+CONFIG				= docker-compose.configure.yml
 COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
+COMPOSE_BUILD		= ${COMPOSE} --file ${SRCS_DIR}/${CONFIG}
 A					=
 
 VOLUMES_DIR			= ~/data
@@ -23,6 +25,9 @@ all:
 
 $(NAME):			
 					@$(MAKE) deps
+					${COMPOSE_BUILD} up
+
+start:
 					${COMPOSE} up
 
 logger:
@@ -36,29 +41,22 @@ deps:
 					mkdir -p ${VOLUMES_DIR}/www
 					echo kill $(sudo netstat -anp | awk '/ LISTEN / {if($4 ~ ":80$") { gsub("/.*","",$7); print $7; exit } }')
 
-start:				
-					@$(MAKE) deps
-					$(COMPOSE) build
-					@$(MAKE) configure
-					@$(MAKE) all
-
 cli:
-					$(COMPOSE) run --rm wpcli $(A)
+					$(COMPOSE_BUILD) run --rm wpcli $(A)
 configure:
-					$(COMPOSE) run --rm wpcli install
-
+					$(COMPOSE_BUILD) run --rm wpcli install
 
 cmp:
-					$(COMPOSE) ${A}
+					$(COMPOSE_BUILD) ${A}
 
 stop:
-					${COMPOSE} stop
+					${COMPOSE_BUILD} stop
 
 down:
-					${COMPOSE} down
+					${COMPOSE_BUILD} down
 
 clear:
-					${COMPOSE} down -v
+					${COMPOSE_BUILD} down -v
 					docker system prune -f
 
 fclear:				clear
@@ -72,7 +70,7 @@ mariadb:
 					${COMPOSE} exec mariadb /bin/sh
 
 wpcli:
-					${COMPOSE} exec wpcli /bin/sh
+					${COMPOSE_BUILD} exec wpcli /bin/sh
 
 mysql_root:
 					${COMPOSE} exec -u root mariadb mariadb -h localhost -u root
@@ -80,19 +78,12 @@ mysql_root:
 mysql:
 					${COMPOSE} exec -u root mariadb mariadb -h localhost -u adda-sil -p
 
-adminer:
-					${COMPOSE} exec adminer /bin/sh
-
 wordpress:
 					${COMPOSE} exec wordpress /bin/sh
-
-test:
-					${COMPOSE} exec test /bin/sh
 
 re:					deps
 					${COMPOSE} up --build
 
-fre:				clear
-					${COMPOSE} up --build
+fre:				fclear re
 
-.PHONY:				srcs logger
+.PHONY:				srcs

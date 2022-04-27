@@ -9,7 +9,8 @@ RUN     chown -R www:www /var/www
 
 ADD     tools/entry-point.sh /tmp/entry-point.sh
 RUN     chmod +x /tmp/entry-point.sh
+ADD     conf/adminer.php /tmp/adminer.php
 
 USER    root
 
-CMD     su www -c "/tmp/entry-point.sh"
+ENTRYPOINT sh /tmp/entry-point.sh

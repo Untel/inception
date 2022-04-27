@@ -18,7 +18,6 @@ if [ "$1" == "install" ]; then
     fi
     if ! wp $wp_opts core is-installed; then
       echo "MSQL USER" $MYSQL_USER " DB IS " $WP_DB_NAME
-      env
       echo -e $WP_CONFIG_EXTRA | wp $wp_opts config create --dbname=$WP_DB_NAME --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --dbcharset=utf8 --dbcollate=utf8_general_ci --extra-php
       echo 'CORE INSTALL WORDPRESS CONFIG'
       wp $wp_opts core install --url="$DOMAIN_NAME/" --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email

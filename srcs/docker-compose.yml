@@ -33,9 +33,11 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - nginx_bridge
-    volumes:
-      - www:/var/www
+      - inner
+    depends_on:
+      - wordpress
+    volumes_from:
+      - wordpress
     tty: true
     entrypoint: nginx -g 'daemon off;'
   wordpress:
@@ -45,57 +47,22 @@ services:
       target: inception_wordpress
     restart: always
     expose:
-      - 9000
       - 9001
     networks:
       - database
-      - nginx_bridge
+      - inner
     depends_on:
       - mariadb
     env_file:
       - .env
+    volumes:
+      - www:/var/www
     tty: true
     entrypoint: su -c "/usr/sbin/php-fpm7 -F -R" - root
-  wpcli:
-    container_name: wpcli
-    build:
-      context: requirements/wordpress
-      target: inception_wpcli
-    restart: 'no'
-    depends_on:
-      - mariadb
-    env_file:
-      - .env
-    volumes_from:
-      - nginx
-    networks:
-      - database
-    entrypoint: su www -s /scripts/entry-point.sh
-  # adminer:
-  #   container_name: adminer
-  #   build: 
-  #     context: requirements/bonus/adminer
-  #   restart: 'no'
-  #   depends_on:
-  #     - nginx
-  #   volumes_from:
-  #     - nginx
-  #   command: echo 'Adminer built'
-  # test:
-  #   image: alpine
-  #   restart: always
-  static:
-    container_name: static
-    build:
-      context: requirements/bonus/static
-    restart: 'no'
-    volumes_from:
-      - nginx
-    entrypoint: git clone https://github.com/untel/untel.github.io /var/www/static
 
 networks:
   database:
-  nginx_bridge:
+  inner:
 
 volumes:
   db:
