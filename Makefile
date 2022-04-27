@@ -25,7 +25,7 @@ all:
 					@$(MAKE) $(NAME)
 
 $(NAME):
-					@$(MAKE) dep
+					@$(MAKE) deps
 					${COMPOSE_BUILD} up -d
 					${COMPOSE} up --remove-orphans
 
@@ -93,6 +93,8 @@ wordpress:
 redis:
 					${COMPOSE} exec redis /bin/sh
 
+ftp:
+					${COMPOSE} exec ftp /bin/sh
 re:					
 					@$(MAKE) deps
 					${COMPOSE} up --build

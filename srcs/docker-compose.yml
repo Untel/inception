@@ -1,5 +1,19 @@
 version: '3'
 services:
+  ftp:
+    container_name: ftp
+    build:
+      context: requirements/bonus/ftp
+      args:
+        FTP_USER:           ${FTP_USER}
+        FTP_PASSWORD:       ${FTP_PASSWORD}
+    environment:
+      FTP_USER:           ${FTP_USER}
+      FTP_PASSWORD:       ${FTP_PASSWORD}
+    volumes_from:
+      - wordpress
+    entrypoint: /usr/sbin/vsftpd
+    command: /etc/vsftpd/vsftpd.conf
   mariadb:
     container_name: mariadb
     build:
