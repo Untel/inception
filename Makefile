@@ -52,6 +52,8 @@ cli:
 					$(COMPOSE_BUILD) run --rm wpcli $(A)
 configure:
 					$(COMPOSE_BUILD) run --rm wpcli install
+					$(COMPOSE_BUILD) run --rm static
+					$(COMPOSE_BUILD) run --rm adminer
 
 cmp:
 					$(COMPOSE_BUILD) ${A}
