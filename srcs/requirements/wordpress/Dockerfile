@@ -1,4 +1,4 @@
-###             BaseImage
+###             Base image
 FROM            alpine as inception_alpine_php
 RUN             apk update
 RUN             apk upgrade
@@ -9,7 +9,6 @@ RUN             mkdir -p /var/www
 RUN             mkdir -p /var/log
 RUN             chown -R www:www /var/www
 RUN             chown -R www:www /var/log
-
 
 WORKDIR         /var/www
 
@@ -28,7 +27,6 @@ RUN             apk add mariadb-client
 ADD             https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
 RUN             chmod +x /usr/local/bin/wp
 RUN             chown -R www:www /usr/local/bin/wp
-# ADD            /tools/adminer.php /tmp/adminer.php
 
 ADD             /tools/entry-point.sh /scripts/
 RUN             chmod +x /scripts/entry-point.sh

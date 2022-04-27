@@ -46,6 +46,7 @@ services:
       context: requirements/wordpress
       target: inception_wordpress
     restart: always
+    tty: true
     expose:
       - 9001
     networks:
@@ -57,8 +58,18 @@ services:
       - .env
     volumes:
       - www:/var/www
-    tty: true
     entrypoint: su -c "/usr/sbin/php-fpm7 -F -R" - root
+  redis:
+    container_name: redis
+    build:
+      context: requirements/bonus/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - inner
+    restart: always
+    tty: true
+    entrypoint: redis-server --protected-mode no
 
 networks:
   database:

@@ -20,15 +20,22 @@ A					=
 
 VOLUMES_DIR			= ~/data
 
-all:
+all:				
+					@$(MAKE) deps
 					@$(MAKE) $(NAME)
 
-$(NAME):			
-					@$(MAKE) deps
-					${COMPOSE_BUILD} up
+$(NAME):
+					@$(MAKE) dep
+					${COMPOSE_BUILD} up -d
+					${COMPOSE} up --remove-orphans
 
 start:
-					${COMPOSE} up
+					@$(MAKE) deps
+					${COMPOSE} up --remove-orphans
+
+build:
+					@$(MAKE) deps
+					${COMPOSE_BUILD} up --build --remove-orphans
 
 logger:
 					$(COMPOSE) logs --tail="all" -t -f
@@ -81,9 +88,15 @@ mysql:
 wordpress:
 					${COMPOSE} exec wordpress /bin/sh
 
-re:					deps
+redis:
+					${COMPOSE} exec redis /bin/sh
+
+re:					
+					@$(MAKE) deps
 					${COMPOSE} up --build
 
-fre:				fclear re
+fre:				
+					$(MAKE) fclear
+					${MAKE} build
 
 .PHONY:				srcs
