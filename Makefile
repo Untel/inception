@@ -21,7 +21,8 @@ VOLUMES_DIR			= ~/data
 all:
 					@$(MAKE) $(NAME)
 
-$(NAME):			deps
+$(NAME):			
+					@$(MAKE) deps
 					${COMPOSE} up
 
 logger:
@@ -35,7 +36,8 @@ deps:
 					mkdir -p ${VOLUMES_DIR}/wordpress
 					echo kill $(sudo netstat -anp | awk '/ LISTEN / {if($4 ~ ":80$") { gsub("/.*","",$7); print $7; exit } }')
 
-start:				deps
+start:				
+					@$(MAKE) deps
 					$(COMPOSE) build
 					$(COMPOSE) up -d
 					@$(MAKE) configure

@@ -21,7 +21,7 @@ if [ "$1" == "install" ]; then
       env
       echo -e $WP_CONFIG_EXTRA | wp $wp_opts config create --dbname=$WP_DB_NAME --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --dbcharset=utf8 --dbcollate=utf8_general_ci --extra-php
       echo 'CORE INSTALL WORDPRESS CONFIG'
-      wp $wp_opts core install --url=$DOMAIN_NAME --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email
+      wp $wp_opts core install --url="$DOMAIN_NAME/" --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email
       echo 'CREATING USER'
       # wp $wp_opts user create --path=$install_dir $WP_USER $WP_EMAIL --user_pass=$WP_PWD --role="editor"
     else

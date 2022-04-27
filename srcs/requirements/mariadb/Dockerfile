@@ -4,12 +4,8 @@ RUN     apk update
 RUN     apk upgrade
 RUN     apk add --no-cache mariadb 
 RUN     apk add --no-cache mariadb-client
-
-
-
 USER        root
 COPY        /conf/my.cnf /etc/mysql/my.cnf
-# COPY        /tools/bootstrap.sql.sh /bootstrap.sql.sh
 
 ARG         WP_DB_NAME
 ARG         MYSQL_USER
