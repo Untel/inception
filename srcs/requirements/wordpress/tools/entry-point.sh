@@ -23,7 +23,7 @@ if [ "$1" == "install" ]; then
       echo 'CORE INSTALL WORDPRESS CONFIG'
       wp $wp_opts core install --url="$DOMAIN_NAME/" --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email
       echo 'CREATING USER'
-      # wp $wp_opts user create --path=$install_dir $WP_USER $WP_EMAIL --user_pass=$WP_PWD --role="editor"
+      wp $wp_opts user create --path=$install_dir $WP_USER $WP_EMAIL --user_pass=$WP_PWD --role="editor"
     else
       echo 'WORDPRESS IS STILL CONFIGURED'
     fi
