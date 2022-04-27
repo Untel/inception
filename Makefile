@@ -32,16 +32,14 @@ log:
 					$(COMPOSE) logs --tail="all" -t -f $(A)
 
 deps:
-					mkdir -p ${VOLUMES_DIR}/mariadb
-					mkdir -p ${VOLUMES_DIR}/wordpress
+					mkdir -p ${VOLUMES_DIR}/db
+					mkdir -p ${VOLUMES_DIR}/www
 					echo kill $(sudo netstat -anp | awk '/ LISTEN / {if($4 ~ ":80$") { gsub("/.*","",$7); print $7; exit } }')
 
 start:				
 					@$(MAKE) deps
 					$(COMPOSE) build
-					$(COMPOSE) up -d
 					@$(MAKE) configure
-					@$(MAKE) stop
 					@$(MAKE) all
 
 cli:

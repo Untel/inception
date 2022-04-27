@@ -23,8 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
     entrypoint: mysqld
     volumes:
-      - mariadb_data:/var/lib/mysql/
-      # - ~/data/mariadb:/var/lib/mysql/
+      - db:/var/lib/mysql/
     tty: true
   nginx:
     container_name: nginx
@@ -32,15 +31,11 @@ services:
     restart: always
     ports:
       - "80:80"
-      # - "443:443"
+      - "443:443"
     networks:
       - nginx_bridge
-    depends_on:
-      - wordpress
     volumes:
-      - wordpress_files:/var/www
-      # - ./conf/nginx.conf:/etc/nginx/nginx.conf
-      # - ~/data/mariadb:/var/lib/mysql/
+      - www:/var/www
     tty: true
     entrypoint: nginx -g 'daemon off;'
   wordpress:
@@ -49,9 +44,6 @@ services:
       context: requirements/wordpress
       target: inception_wordpress
     restart: always
-    volumes:
-      - wordpress_files:/var/www
-      # - ~/data/wordpress:/var/www
     expose:
       - 9000
       - 9001
@@ -71,51 +63,48 @@ services:
       target: inception_wpcli
     restart: 'no'
     depends_on:
-      - wordpress
       - mariadb
     env_file:
       - .env
     volumes_from:
-      - wordpress
+      - nginx
     networks:
       - database
-    environment:
-      WP_DB_NAME:             ${WP_DB_NAME}
-      MYSQL_USER:             ${MYSQL_USER}
-      MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
-      # WP_CONFIG_EXTRA: |
-      #   define('WP_HOME', '${DOMAIN_NAME}');
-      #   define('WP_SITEURL', '${DOMAIN_NAME}');
     entrypoint: su www -s /scripts/entry-point.sh
-    tty: true
   # adminer:
-  #   build: ./requirements/adminer
-  #   restart: always
-  #   ports:
-  #     - 1664:80
+  #   container_name: adminer
+  #   build: 
+  #     context: requirements/bonus/adminer
+  #   restart: 'no'
+  #   depends_on:
+  #     - nginx
+  #   volumes_from:
+  #     - nginx
+  #   command: echo 'Adminer built'
   # test:
   #   image: alpine
   #   restart: always
-  #   tty: true
+  static:
+    container_name: static
+    build:
+      context: requirements/bonus/static
+    restart: 'no'
+    volumes_from:
+      - nginx
+    entrypoint: git clone https://github.com/untel/untel.github.io /var/www/static
 
 networks:
   database:
   nginx_bridge:
 
 volumes:
-  mariadb_data:
-    #driver: local
+  db:
     driver_opts:
       type: none
       o: bind
-      device: "$HOME/data/mariadb"
-    # driver: local-persist
-    # driver_opts:
-    #   mountpoint: '~/adda-sil/data/mariadb'
-  wordpress_files:
-    #driver: local
+      device: "$HOME/data/db"
+  www:
     driver_opts:
       type: none
       o: bind
-      device: "$HOME/data/wordpress"
+      device: "$HOME/data/www"
