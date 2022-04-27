@@ -21,15 +21,17 @@ services:
       MYSQL_USER:             ${MYSQL_USER}
       MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    entrypoint: mysqld
     volumes:
       - mariadb_data:/var/lib/mysql/
+      # - ~/data/mariadb:/var/lib/mysql/
     tty: true
   nginx:
     container_name: nginx
     build: requirements/nginx
     restart: always
     ports:
-      - "8080:80"
+      - "80:80"
       # - "443:443"
     networks:
       - nginx_bridge
@@ -37,7 +39,9 @@ services:
       - wordpress
     volumes:
       - wordpress_files:/var/www
+      # - ~/data/mariadb:/var/lib/mysql/
     tty: true
+    entrypoint: nginx -g 'daemon off;'
   wordpress:
     container_name: wordpress
     build:
@@ -46,6 +50,7 @@ services:
     restart: always
     volumes:
       - wordpress_files:/var/www
+      # - ~/data/wordpress:/var/www
     expose:
       - 9000
       - 9001
@@ -57,6 +62,7 @@ services:
     env_file:
       - .env
     tty: true
+    entrypoint: su -c "/usr/sbin/php-fpm7 -F -R" - root
   wpcli:
     container_name: wpcli
     build:
@@ -72,7 +78,16 @@ services:
       - wordpress
     networks:
       - database
-    entrypoint: sh /scripts/entry-point.sh
+    environment:
+      WP_DB_NAME:             ${WP_DB_NAME}
+      MYSQL_USER:             ${MYSQL_USER}
+      MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+      WP_CONFIG_EXTRA: |
+        define('WP_HOME', '${DOMAIN_NAME}/');
+        define('WP_SITEURL', '${DOMAIN_NAME}/');
+    entrypoint: su www -s /scripts/entry-point.sh
+    tty: true
   # adminer:
   #   build: ./requirements/adminer
   #   restart: always
@@ -89,15 +104,17 @@ networks:
 
 volumes:
   mariadb_data:
+    #driver: local
     driver_opts:
       type: none
       o: bind
-      device: "$HOME/adda-sil/data/mariadb"
+      device: "$HOME/data/mariadb"
     # driver: local-persist
     # driver_opts:
     #   mountpoint: '~/adda-sil/data/mariadb'
   wordpress_files:
+    #driver: local
     driver_opts:
       type: none
       o: bind
-      device: "$HOME/adda-sil/data/wordpress"
+      device: "$HOME/data/wordpress"

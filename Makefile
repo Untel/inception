@@ -16,12 +16,12 @@ ENTRY				= docker-compose.yml
 COMPOSE				= docker-compose --file ${SRCS_DIR}/${ENTRY}
 A					=
 
-VOLUMES_DIR			= ~/adda-sil/data
+VOLUMES_DIR			= ~/data
 
 all:
 					@$(MAKE) $(NAME)
 
-$(NAME):
+$(NAME):			deps
 					${COMPOSE} up
 
 logger:
@@ -30,14 +30,12 @@ logger:
 log:
 					$(COMPOSE) logs --tail="all" -t -f $(A)
 
-create_volumes_dir:
+deps:
 					mkdir -p ${VOLUMES_DIR}/mariadb
 					mkdir -p ${VOLUMES_DIR}/wordpress
+					echo kill $(sudo netstat -anp | awk '/ LISTEN / {if($4 ~ ":80$") { gsub("/.*","",$7); print $7; exit } }')
 
-local_persist_plugin:
-					curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
-
-start:				create_volumes_dir
+start:				deps
 					$(COMPOSE) build
 					$(COMPOSE) up -d
 					@$(MAKE) configure
@@ -61,6 +59,10 @@ down:
 
 clear:
 					${COMPOSE} down -v
+					docker system prune -f
+
+fclear:				clear
+					sudo rm -rf ${VOLUMES_DIR}
 
 
 nginx:
@@ -87,7 +89,7 @@ wordpress:
 test:
 					${COMPOSE} exec test /bin/sh
 
-re:					create_volumes_dir
+re:					deps
 					${COMPOSE} up --build
 
 fre:				clear

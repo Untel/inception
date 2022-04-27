@@ -33,5 +33,5 @@ RUN         chown -R mysql:mysql /run/mysqld
 RUN         mariadb-install-db
 
 EXPOSE      3306
-ENTRYPOINT  su -c "mysqld"
+ENTRYPOINT  mysqld
 

@@ -32,6 +32,4 @@ RUN             chown -R www:www /usr/local/bin/wp
 ADD             /tools/entry-point.sh /scripts/
 RUN             chmod +x /scripts/entry-point.sh
 
-USER            www
-ENTRYPOINT      /scripts/entry-point.sh
-CMD             ["wp", "--allow-root"]
+ENTRYPOINT      su www -s /scripts/entry-point.sh
