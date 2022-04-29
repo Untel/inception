@@ -17,6 +17,10 @@ services:
     networks:
       - database
       - inner
+    depends_on:
+      - mariadb
+      - wordpress
+      - redis
     environment:
       WP_CONFIG_EXTRA: |+
         define('WP_REDIS_HOST', 'redis');

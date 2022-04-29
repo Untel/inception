@@ -13,7 +13,7 @@ ARG     FTP_PASSWORD
 RUN     adduser "$FTP_USER" --disabled-password
 RUN     echo "$FTP_USER:$FTP_PASSWORD" | /usr/sbin/chpasswd &> /dev/null
 RUN     chown -R "$FTP_USER:$FTP_USER" /var/www
-RUN     echo $FTP_USER | tee -a /etc/vsftpd.userlist &> /dev/nSll
+RUN     echo $FTP_USER | tee -a /etc/vsftpd/user_list &> /dev/null
 
 ENTRYPOINT /usr/sbin/vsftpd
 CMD /etc/vsftpd/vsftpd.conf

@@ -12,6 +12,8 @@ services:
       FTP_PASSWORD:       ${FTP_PASSWORD}
     volumes_from:
       - wordpress
+    ports:
+      - "21:21"
     entrypoint: /usr/sbin/vsftpd
     command: /etc/vsftpd/vsftpd.conf
   mariadb:
