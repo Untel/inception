@@ -31,7 +31,7 @@ $(NAME):
 
 start:
 					@$(MAKE) deps
-					${COMPOSE} up --remove-orphans
+					${COMPOSE} up --build --remove-orphans
 
 build:
 					@$(MAKE) deps

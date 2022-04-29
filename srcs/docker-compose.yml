@@ -10,12 +10,16 @@ services:
     environment:
       FTP_USER:           ${FTP_USER}
       FTP_PASSWORD:       ${FTP_PASSWORD}
+    tty: true
     volumes_from:
       - wordpress
     ports:
       - "21:21"
+    restart: always
     entrypoint: /usr/sbin/vsftpd
-    command: /etc/vsftpd/vsftpd.conf
+    command:
+      - /etc/vsftpd/vsftpd.conf
+
   mariadb:
     container_name: mariadb
     build:
