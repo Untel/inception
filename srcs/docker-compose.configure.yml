@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  wpcli:
+    container_name: wpcli
+    build:
+      context: requirements/wordpress
+      target: inception_wpcli
+    restart: 'no'
+    depends_on:
+      - mariadb
+      - redis
+    env_file:
+      - .env
+    volumes_from:
+      - wordpress
+    networks:
+      - database
+      - inner
+    environment:
+      WP_CONFIG_EXTRA: |+
+        define('WP_REDIS_HOST', 'redis');
+        define('WP_REDIS_PORT', 6379);
+        define('WP_REDIS_TIMEOUT', 1);
+        define('WP_REDIS_READ_TIMEOUT', 1);
+    entrypoint: su www -s "/scripts/entry-point.sh"
+    command: install
+  adminer:
+    container_name: adminer
+    build: 
+      context: requirements/bonus/adminer
+    restart: 'no'
+    volumes_from:
+      - wordpress
+    entrypoint: sh /tmp/entry-point.sh
+  static:
+    container_name: static
+    build:
+      context: requirements/bonus/static
+    restart: 'no'
+    volumes_from:
+      - wordpress
+    entrypoint: su www -s "/tmp/entry-point.sh"

@@ -1,0 +1,102 @@
+version: '3'
+services:
+  ftp:
+    container_name: ftp
+    build:
+      context: requirements/bonus/ftp
+      args:
+        FTP_USER:           ${FTP_USER}
+        FTP_PASSWORD:       ${FTP_PASSWORD}
+    environment:
+      FTP_USER:           ${FTP_USER}
+      FTP_PASSWORD:       ${FTP_PASSWORD}
+    volumes_from:
+      - wordpress
+    entrypoint: /usr/sbin/vsftpd
+    command: /etc/vsftpd/vsftpd.conf
+  mariadb:
+    container_name: mariadb
+    build:
+      context: requirements/mariadb
+      args:
+        WP_DB_NAME:           ${WP_DB_NAME}
+        MYSQL_USER:           ${MYSQL_USER}
+        MYSQL_PASSWORD:       ${MYSQL_PASSWORD}
+        MYSQL_ROOT_PASSWORD:  ${MYSQL_ROOT_PASSWORD}
+    restart: always
+    expose:
+      - 3306
+    networks:
+      - database
+    env_file:
+      - .env
+    environment:
+      WP_DB_NAME:             ${WP_DB_NAME}
+      MYSQL_USER:             ${MYSQL_USER}
+      MYSQL_PASSWORD:         ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD:    ${MYSQL_ROOT_PASSWORD}
+    entrypoint: mysqld
+    volumes:
+      - db:/var/lib/mysql/
+    tty: true
+  nginx:
+    container_name: nginx
+    build: requirements/nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - inner
+    depends_on:
+      - wordpress
+    volumes_from:
+      - wordpress
+    tty: true
+    entrypoint: nginx -g 'daemon off;'
+  wordpress:
+    container_name: wordpress
+    build:
+      context: requirements/wordpress
+      target: inception_wordpress
+    restart: always
+    tty: true
+    expose:
+      - 9001
+    networks:
+      - database
+      - inner
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+    volumes:
+      - www:/var/www
+    entrypoint: su -c "/usr/sbin/php-fpm7 -F -R" - root
+  redis:
+    container_name: redis
+    build:
+      context: requirements/bonus/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - inner
+    restart: always
+    tty: true
+    entrypoint: redis-server --protected-mode no
+
+networks:
+  database:
+  inner:
+
+volumes:
+  db:
+    driver_opts:
+      type: none
+      o: bind
+      device: "$HOME/data/db"
+  www:
+    driver_opts:
+      type: none
+      o: bind
+      device: "$HOME/data/www"
